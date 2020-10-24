@@ -53,7 +53,8 @@ def broadcast(update: Update, context: CallbackContext):
     to_send = update.effective_message.text.split(None, 1)
 
     if len(to_send) >= 2:
-        to_group = to_user = False
+        to_group = False
+        to_user = False
         if to_send[0] == '/broadcastgroups':
             to_group = True
         if to_send[0] == '/broadcastusers':
@@ -116,9 +117,9 @@ def chats(update: Update, context: CallbackContext):
     P = 1
     for chat in all_chats:
         try:
-            curr_chat = bot.getChat(chat.chat_id)
-            bot_member = curr_chat.get_member(bot.id)
-            chat_members = curr_chat.get_members_count(bot.id)
+            curr_chat = context.bot.getChat(chat.chat_id)
+            bot_member = curr_chat.get_member(context.bot.id)
+            chat_members = curr_chat.get_members_count(context.bot.id)
             chatfile += "{}. {} | {} | {}\n".format(P, chat.chat_name,
                                                     chat.chat_id, chat_members)
             P = P + 1
@@ -142,10 +143,12 @@ def chat_checker(update: Update, context: CallbackContext):
 
 
 def __user_info__(user_id):
+    if user_id in [777000, 1087968824]:
+        return """╘══「 Groups count: <code>???</code> 」"""
     if user_id == dispatcher.bot.id:
-        return """I've seen them in... Wow. Are they stalking me? They're in all the same places I am... oh. It's me."""
+        return """╘══「 Groups count: <code>???</code> 」"""
     num_chats = sql.get_user_num_chats(user_id)
-    return f"""I've seen them in <code>{num_chats}</code> chats in total."""
+    return f"""╘══「 Groups count: <code>{num_chats}</code> 」"""
 
 
 def __stats__():

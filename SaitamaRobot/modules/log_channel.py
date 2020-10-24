@@ -1,19 +1,21 @@
 from datetime import datetime
 from functools import wraps
 
-from SaitamaRobot.modules.helper_funcs.misc import is_module_loaded
 from telegram.ext import CallbackContext
+
+from SaitamaRobot.modules.helper_funcs.misc import is_module_loaded
 
 FILENAME = __name__.rsplit(".", 1)[-1]
 
 if is_module_loaded(FILENAME):
-    from SaitamaRobot import GBAN_LOGS, LOGGER, dispatcher
-    from SaitamaRobot.modules.helper_funcs.chat_status import user_admin
-    from SaitamaRobot.modules.sql import log_channel_sql as sql
     from telegram import ParseMode, Update
     from telegram.error import BadRequest, Unauthorized
     from telegram.ext import CommandHandler, JobQueue, run_async
     from telegram.utils.helpers import escape_markdown
+
+    from SaitamaRobot import EVENT_LOGS, LOGGER, dispatcher
+    from SaitamaRobot.modules.helper_funcs.chat_status import user_admin
+    from SaitamaRobot.modules.sql import log_channel_sql as sql
 
     def loggable(func):
 
@@ -40,12 +42,6 @@ if is_module_loaded(FILENAME):
                 log_chat = sql.get_chat_log_channel(chat.id)
                 if log_chat:
                     send_log(context, log_chat, chat.id, result)
-            elif result == "" or not result:
-                pass
-            else:
-                LOGGER.warning(
-                    "%s was set as loggable, but had no return statement.",
-                    func)
 
             return result
 
@@ -67,15 +63,9 @@ if is_module_loaded(FILENAME):
 
                 if message.chat.type == chat.SUPERGROUP and message.chat.username:
                     result += f'\n<b>Link:</b> <a href="https://t.me/{chat.username}/{message.message_id}">click here</a>'
-                log_chat = str(GBAN_LOGS)
+                log_chat = str(EVENT_LOGS)
                 if log_chat:
                     send_log(context, log_chat, chat.id, result)
-            elif result == "" or not result:
-                pass
-            else:
-                LOGGER.warning(
-                    "%s was set as loggable to gbanlogs, but had no return statement.",
-                    func)
 
             return result
 
